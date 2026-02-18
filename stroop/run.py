@@ -5,7 +5,7 @@ import csv
 import pandas as pd
 from psychopy import core, visual, event, logging
 
-PATH_TRIALS = "trials.csv"
+PATH_TRIALS = 'trials.csv'
 
 
 def main(sid: str) -> None:
@@ -13,38 +13,38 @@ def main(sid: str) -> None:
     main_clock = core.Clock()
     logging.setDefaultClock(main_clock)
 
-    log_path = Path(f"{sid}.log")
-    logging.LogFile(str(log_path), level=logging.INFO, filemode="w")
-    logging.info(f"Starting session sid={sid}")
+    log_path = Path(f'{sid}.log')
+    logging.LogFile(str(log_path), level=logging.INFO, filemode='w')
+    logging.info(f'Starting session sid={sid}')
 
     # -- WINDOW -- #
-    win = visual.Window(size=[400, 400], fullscr=False, color="grey", name="Window")
+    win = visual.Window(size=[1000, 10], fullscr=False, color='grey', name='Window')
 
     # -- STIMULUS TIMELINE -- #
-    fixation = visual.TextStim(win=win, pos=(0, 0), text="+", color="white")
+    fixation = visual.TextStim(win=win, pos=(0, 0), text='+', color='white')
     fixation_duration = 0.7
 
-    stroop = visual.TextStim(win=win, pos=(0, 0), text="")
+    stroop = visual.TextStim(win=win, pos=(0, 0), text='')
     stroop_duration = 2.5  # response deadline (seconds)
 
-    iti = visual.TextStim(win=win, pos=(0, 0), text="")
+    iti = visual.TextStim(win=win, pos=(0, 0), text='')
     iti_duration = 0.5
 
     # -- KEY MAPPING -- #
     key_mapping = {
-        "d": "red",
-        "f": "blue",
-        "j": "green",
-        "k": "yellow",
+        'd': 'red',
+        'f': 'blue',
+        'j': 'green',
+        'k': 'yellow',
     }
 
     # -- TRIALS -- #
     trials = pd.read_csv(PATH_TRIALS)
 
     # -- CRASH-SAFE CSV WRITER -- #
-    out_csv_path = Path(f"{sid}.csv")
-    f = out_csv_path.open("w", newline="")
-    fieldnames = ["sid", "trial", "color", "word", "key", "rt", "correct"]
+    out_csv_path = Path(f'{sid}.csv')
+    f = out_csv_path.open('w', newline='')
+    fieldnames = ['sid', 'trial', 'color', 'word', 'key', 'rt', 'correct']
     writer = csv.DictWriter(f, fieldnames=fieldnames)
     writer.writeheader()
     f.flush()
@@ -56,7 +56,7 @@ def main(sid: str) -> None:
             color = str(trial.color)
             word = str(trial.word)
 
-            logging.data(f"Trial {t_idx} start: color={color}, word={word}")
+            logging.data(f'Trial {t_idx} start: color={color}, word={word}')
 
             # Fixation
             fixation.draw()
@@ -80,20 +80,20 @@ def main(sid: str) -> None:
             if result is not None:
                 key, rt = result[0]
                 correct = (key_mapping.get(key) == color)
-                logging.data(f"Trial {t_idx} response: key={key}, rt={rt:.4f}, correct={correct}")
+                logging.data(f'Trial {t_idx} response: key={key}, rt={rt:.4f}, correct={correct}')
             else:
                 key, rt, correct = None, None, False
-                logging.warning(f"Trial {t_idx} timeout (no response within {stroop_duration}s)")
+                logging.warning(f'Trial {t_idx} timeout (no response within {stroop_duration}s)')
 
             writer.writerow(
                 {
-                    "sid": sid,
-                    "trial": t_idx,
-                    "color": color,
-                    "word": word,
-                    "key": key,
-                    "rt": rt,
-                    "correct": correct,
+                    'sid': sid,
+                    'trial': t_idx,
+                    'color': color,
+                    'word': word,
+                    'key': key,
+                    'rt': rt,
+                    'correct': correct,
                 }
             )
             f.flush()
@@ -103,10 +103,10 @@ def main(sid: str) -> None:
             win.flip()
             core.wait(iti_duration)
 
-        logging.info("Session finished normally.")
+        logging.info('Session finished normally.')
 
     except Exception as e:
-        logging.error(f"Session crashed: {repr(e)}")
+        logging.error(f'Session crashed: {repr(e)}')
         raise
 
     finally:
@@ -117,6 +117,6 @@ def main(sid: str) -> None:
             core.quit()
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     subject_id = str(uuid.uuid4())
     main(sid=subject_id)
